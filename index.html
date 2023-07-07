@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Control Pico y Placa</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="src\css\style.css" />
+   </head>
+<body>
+    <div class="sidebar">
+        <div class="logo-details">
+            <i class='bx bxl-c-plus-plus icon'></i>
+            <div class="logo_name">Menú</div>
+            <span class="material-symbols-outlined" id="btn">menu</span>
+        </div>
+        <ul class="nav-list">
+            <li>
+                <a href="#" onclick="mostrarFormulario('form2')">
+                    <span class="material-symbols-outlined">settings</span>
+                    <i class='bx bx-grid-alt'></i>
+                    <span class="links_name">Configurar</span>
+                </a>
+                <span class="tooltip">Configurar Pico y Placa</span>
+            </li>
+            <li>
+                <a href="#" onclick="mostrarFormulario('form1')">
+                    <span class="material-symbols-outlined">description</span>
+                    <i class='bx bx-grid-alt'></i>
+                    <span class="links_name">Consultar</span>
+                </a>
+                <span class="tooltip">Consultar Pico y Placa</span>
+            </li>
+        </ul>
+    </div>
+    <section class="home-section">
+        <div id="form1" class="registration-form mostrar">
+            <div class="title">
+                <h4>Consultar Pico y Placa</h4>
+                <div class="form-icon">
+                    <span class="material-symbols-outlined">emoji_transportation</span>
+                </div>
+            </div>
+            <form id="placa-form">
+                <div class="form-group">
+                    <label for="placa">Ingrese el número de placa</label>
+                    <input type="text" class="form-control item" name="placa" id="placa" placeholder="MMM-0000" required>
+                </div>
+                <div class="form-group">
+                    <label for="hora_validacion">Ingrese fecha y hora de consulta</label>
+                    <div class="fila">
+                        <input type="time" class="form-control item" name="hora_validacion" id="hora_validacion" required>
+                        <input type="date" class="form-control item" id="fecha_validacion" name="fecha_validacion" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-block validation">Consultar</button>
+
+            </form>
+            <div class="footer">
+                <h4 id="consultar"></h4>
+                <h4 id="error"></h4>
+            </div>
+        </div>
+
+        <div id="form2" class="registration-form">
+            <div class="title">
+                <h4>Configurar Pico y Placa</h4>
+                <div class="form-icon">
+                    <span class="material-symbols-outlined">emoji_transportation</span>
+                </div>
+            </div>
+            <form id="placa-form">
+                <div class="form-group">
+                    <label for="dias">Elija el día para configurar los números del Pico y Placa</label>
+                    <select class="custom-select" name="dias" id="dias">
+                        <option selected>Elejir...</option>
+                    </select>
+                    <div class="popup" id="popup">
+                        <h4 id="diaSeleccionado"></h4>
+                        <select class="custom-select" name="ultimo_digito" id="ultimo_digito"></select>
+                        <div class="placas-agregadas">
+                            <h5>Números agregados</h5>
+                            <ul class="nums" id="listaNumeros"></ul>
+                        </div>
+                        <div class="fila">
+                            <button class="btn btn-block validation" onclick="cerrarPopup()">Cerrar</button>
+                            <button class="btn btn-block validation" onclick="agregarNumero()">Agregar</button>
+                        </div>
+                        
+                    </div>
+                    <div class="overlay" id="overlay"></div>
+                </div>
+                <div class="form-group">
+                    <label for="dias">Elija el horario que se regirá el Pico y Placa</label>
+                    <div class="fila">
+                        <div class="columna">
+                            <label for="desde_horario">Desde</label>
+                            <input type="time" class="form-control item" name="desde_horario" id="desde_horario" required>
+                        </div>
+                        <div class="columna">
+                            <label for="hasta_horario">Hasta</label>
+                            <input type="time" class="form-control item" name="hasta_horario" id="hasta_horario" required>
+                        </div>
+                        
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-block validation">Configurar</button>
+
+            </form>
+            <div class="footer">
+                <h4 id="consultar"></h4>
+                <h4 id="error"></h4>
+            </div>
+            
+        </div>
+    </section>
+    <script>
+        let sidebar = document.querySelector(".sidebar");
+        let closeBtn = document.querySelector("#btn");
+
+        closeBtn.addEventListener("click", ()=>{
+            sidebar.classList.toggle("open");
+            menuBtnChange();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var campoHora = document.getElementById('hora_validacion');
+            var fechaActual = new Date();
+            var horaActual = fechaActual.getHours();
+            var minutoActual = fechaActual.getMinutes();
+            var horaFormateada = horaActual.toString().padStart(2, '0');
+            var minutoFormateado = minutoActual.toString().padStart(2, '0');
+            var valorPorDefecto = horaFormateada + ':' + minutoFormateado;
+            campoHora.value = valorPorDefecto;
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var campoFecha = document.getElementById('fecha_validacion');
+            var fechaActual = new Date();
+            var fechaFormateada = fechaActual.toISOString().split('T')[0];
+            campoFecha.value = fechaFormateada;
+        });
+
+        function mostrarFormulario(formulario) {
+            var formularios = document.getElementsByClassName('registration-form');
+            for (var i = 0; i < formularios.length; i++) {
+                formularios[i].classList.remove('mostrar');
+            }
+            var formularioMostrar = document.getElementById(formulario);
+            formularioMostrar.classList.add('mostrar');
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            var selectDiasSemana = document.getElementById('dias');
+            var dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'];
+
+            for (var i = 0; i < dias.length; i++) {
+                var option = document.createElement('option');
+                option.text = dias[i];
+                selectDiasSemana.add(option);
+            }
+        });
+        var selectOpciones = document.getElementById('dias');
+        var popup = document.getElementById('popup');
+        var overlay = document.getElementById('overlay');
+        var diaSeleccionado = document.getElementById('diaSeleccionado');
+        var selectUltimoDigito = document.getElementById('ultimo_digito');
+        var listaNumeros = document.getElementById('listaNumeros');
+        var numerosSeleccionados = [];
+
+        selectOpciones.addEventListener('change', function() {
+            if (selectOpciones.value !== '') {
+                var dia = selectOpciones.value;
+                diaSeleccionado.textContent = 'Configurar día: ' + dia;
+                mostrarPopup();
+            } else {
+                cerrarPopup();
+            }
+        });
+
+        function mostrarPopup() {
+            popup.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        function cerrarPopup() {
+            popup.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            var selectUltimoDigito = document.getElementById('ultimo_digito');
+            var ultimoDigito = ['1', '2', '3', '4', '5', '6','7', '8', '9','0'];
+
+            for (var i = 0; i < ultimoDigito.length; i++) {
+                var option = document.createElement('option');
+                option.text = ultimoDigito[i];
+                selectUltimoDigito.add(option);
+            }
+        });
+
+        function agregarNumero() {
+            var dia = selectUltimoDigito.value;
+            if (dia !== '' && !numerosSeleccionados.includes(dia)) {
+                numerosSeleccionados.push(dia);
+                mostrarNumeros();
+            }
+        }
+
+        function mostrarNumeros() {
+            listaNumeros.innerHTML = '';
+            for (var i = 0; i < numerosSeleccionados.length; i++) {
+                var li = document.createElement('li');
+                li.textContent = numerosSeleccionados[i];
+                listaNumeros.appendChild(li);
+            }
+        }
+        
+    </script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+    <script src="src\controllers\PlacaController.js"></script>
+    <script src="src\data\PlacaData.js"></script>
+</body>
+</html>
